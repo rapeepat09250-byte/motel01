@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>คอนเสิร์ตทั้งหมด – TicketNow</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header></header>
+
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="page-banner-overlay" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1400&q=80');"></div>
+    <div class="wrap">
+      <a class="crumb" href="index.html">‹ กลับหน้าหลัก</a>
+      <h1>รายการคอนเสิร์ต & เทศกาลดนตรีทั้งหมด</h1>
+      <p>เลือกดูคอนเสิร์ตที่คุณสนใจ ค้นหาตามแนวเพลง หรือศิลปินที่คุณชื่นชอบ พร้อมเปิดจำหน่ายบัตรแล้ววันนี้</p>
+    </div>
+  </section>
+
+  <!-- Filter & Search Toolbar -->
+  <section class="section" style="padding-top: 40px;">
+    <div class="wrap">
+      <div class="search-box" style="box-shadow: var(--shadow-sm); margin-bottom: 32px;">
+        <div class="search-group">
+          <label for="eventSearch">ค้นหาชื่อคอนเสิร์ต / ศิลปิน</label>
+          <input type="text" id="eventSearch" placeholder="พิมพ์ชื่อศิลปิน หรือคอนเสิร์ต...">
+        </div>
+        <div class="search-group">
+          <label for="eventGenre">แนวเพลง</label>
+          <select id="eventGenre">
+            <option value="all">ทุกแนวเพลง</option>
+            <option value="Pop">Pop / Rock</option>
+            <option value="Indie">Indie</option>
+            <option value="Acoustic">Acoustic / Jazz</option>
+            <option value="EDM">EDM / Electronic</option>
+            <option value="Retro">Retro / City Pop</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label for="eventSort">เรียงตาม</label>
+          <select id="eventSort">
+            <option value="default">ค่าเริ่มต้น</option>
+            <option value="price-asc">ราคา: ต่ำ ➔ สูง</option>
+            <option value="price-desc">ราคา: สูง ➔ ต่ำ</option>
+          </select>
+        </div>
+        <button class="btn" id="filterBtn">ค้นหา</button>
+      </div>
+
+      <!-- Result Count & Status -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <p style="color: var(--muted); font-size: 0.95rem;">กำลังแสดงทั้งหมด <b id="count" style="color: var(--ink);">0</b> รายการ</p>
+      </div>
+
+      <!-- Events Grid -->
+      <div class="grid" id="eventsGrid"></div>
+
+      <!-- Placeholder Banner for Friend to Decorate -->
+      <div style="margin-top: 56px; padding: 40px; background: var(--paper-soft); border: 2px dashed var(--line); border-radius: var(--radius-md); text-align: center;">
+        <span style="font-size: 2rem;">📢</span>
+        <h3 style="margin: 12px 0 6px;">พื้นที่สำหรับเพิ่มประกาศคอนเสิร์ตใหม่ (Coming Soon)</h3>
+        <p style="color: var(--muted); max-width: 500px; margin: 0 auto 20px;">เพื่อนของคุณสามารถเพิ่มข้อมูลศิลปิน คอนเสิร์ตเซอร์ไพรส์ หรือสปอนเซอร์ของงานในส่วนนี้ได้ตามใจชอบ</p>
+        <button class="btn outline" onclick="alert('เพื่อนของคุณสามารถเชื่อมโยงปุ่มนี้ได้')">+ เพิ่มข้อมูลใหม่</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer></footer>
+
+  <script src="app.js"></script>
+  <script>
+    function renderEventList(list) {
+      const grid = document.getElementById('eventsGrid');
+      document.getElementById('count').textContent = list.length;
+      if (list.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--muted);">ไม่พบคอนเสิร์ตที่ค้นหา</div>';
+        return;
+      }
+      grid.innerHTML = list.map(c => `
+        <article class="card">
+          <div class="card-img-wrap">
+            <img class="card-img" src="${c.img}" alt="${c.name}" loading="lazy">
+            <span class="card-badge">${c.tag}</span>
+            <span class="card-genre">${c.genre}</span>
+          </div>
+          <div class="body">
+            <span class="artist">${c.artist}</span>
+            <h3>${c.name}</h3>
+            <div class="meta">📅 ${c.date}</div>
+            <div class="meta">📍 ${c.venue}</div>
+            <p class="desc">${c.desc}</p>
+            <div class="foot">
+              <div class="price-box">
+                <span class="price-label">เริ่มต้น</span>
+                <span class="price">${fmt(c.price)}</span>
+              </div>
+              <a class="btn" href="detail.html?id=${c.id}">จองบัตรเลย</a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    renderEventList(CONCERTS);
+
+    function applyFilters() {
+      const q = document.getElementById('eventSearch').value.trim().toLowerCase();
+      const genre = document.getElementById('eventGenre').value;
+      const sort = document.getElementById('eventSort').value;
+
+      let res = CONCERTS.filter(c => {
+        const matchQ = !q || c.name.toLowerCase().includes(q) || c.artist.toLowerCase().includes(q) || c.venue.toLowerCase().includes(q);
+        const matchGenre = genre === 'all' || c.genre.includes(genre);
+        return matchQ && matchGenre;
+      });
+
+      if (sort === 'price-asc') res.sort((a,b) => a.price - b.price);
+      if (sort === 'price-desc') res.sort((a,b) => b.price - a.price);
+
+      renderEventList(res);
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', applyFilters);
+    document.getElementById('eventSearch').addEventListener('keyup', applyFilters);
+    document.getElementById('eventGenre').addEventListener('change', applyFilters);
+    document.getElementById('eventSort').addEventListener('change', applyFilters);
+  </script>
+</body>
+</html>

@@ -1,12 +1,328 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TicketNow – จองบัตรคอนเสิร์ต</title><link rel="stylesheet" href="style.css"></head><body>
-<header></header>
-<section class="hero"><div class="wrap">
- <div><h1>จองบัตรคอนเสิร์ต<br>ง่าย เร็ว ได้ที่นั่งที่ใช่</h1><p>เลือกคอนเสิร์ตที่ชอบ เลือกโซนและจำนวนบัตร แล้วชำระเงินได้ในไม่กี่ขั้นตอน</p><a class="btn" href="#concerts">ดูคอนเสิร์ตทั้งหมด</a></div>
- <div class="stub" aria-hidden="true"><div class="main"><small>เร็วๆ นี้</small><h3>Midnight Echo Live</h3><small>12 ธ.ค. 2569 · อิมแพ็ค อารีนา</small><small>เริ่มต้น ฿1,500</small></div><div class="seat">ADMIT ONE</div></div>
-</div></section>
-<main><div class="wrap" id="concerts"><h2>คอนเสิร์ตที่เปิดจอง</h2><div class="grid" id="grid"></div></div></main>
-<footer></footer>
-<script src="app.js"></script>
-<script>
-document.getElementById('grid').innerHTML=CONCERTS.map(c=>`<article class="card"><div class="cover" style="background:${c.color}">${c.artist}</div><div class="body"><h3>${c.name}</h3><div class="meta">${c.date}</div><div class="meta">${c.venue}</div><div class="foot"><span class="price">เริ่ม ${fmt(1500)}</span><a class="btn" href="detail.html?id=${c.id}">ดูรายละเอียด</a></div></div></article>`).join('');
-</script></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TicketNow – จองบัตรคอนเสิร์ตและเทศกาลดนตรี ง่าย เร็ว ได้ที่นั่งที่ใช่</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header โหลดอัตโนมัติจาก app.js -->
+  <header></header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg-overlay"></div>
+    <div class="wrap">
+      <div>
+        <div class="hero-badge">🔥 แพลตฟอร์มจองบัตรคอนเสิร์ตอันดับ 1 ในไทย</div>
+        <h1>สัมผัสพลังดนตรีสด<br><span>จองบัตรที่ใช่</span> ได้ทันที</h1>
+        <p>ค้นพบคอนเสิร์ตและเทศกาลดนตรีระดับโลกที่กำลังจะมาถึง เลือกโซนที่นั่งโปรด ชำระเงินสะดวกปลอดภัย พร้อมรับ E-Ticket เข้างานได้ทันทีผ่านมือถือ</p>
+        
+        <div class="hero-actions">
+          <a class="btn btn-lg" href="#concerts">🔥 ดูคอนเสิร์ตเปิดจอง</a>
+          <a class="btn btn-lg outline-white" href="venues.html">🏛️ สถานที่จัดงาน</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h4>50+</h4>
+            <p>คอนเสิร์ตปีนี้</p>
+          </div>
+          <div class="stat-item">
+            <h4>100,000+</h4>
+            <p>ผู้ใช้งานไว้ใจ</p>
+          </div>
+          <div class="stat-item">
+            <h4>100%</h4>
+            <p>รับประกันบัตรแท้</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Ticket Stub Preview -->
+      <div>
+        <div class="stub-card" aria-hidden="true">
+          <div class="stub-left">
+            <span class="stub-tag">LIVE CONCERT</span>
+            <h3>Midnight Echo Live</h3>
+            <p class="stub-meta">📅 12 ธันวาคม 2569</p>
+            <p class="stub-meta">📍 อิมแพ็ค อารีนา เมืองทองธานี</p>
+            <p class="stub-price">เริ่มต้นเพียง ฿1,500</p>
+          </div>
+          <div class="stub-right">
+            <div class="stub-seat">ADMIT ONE</div>
+            <div class="stub-barcode">||| | | |||| | ||</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Search & Filter Bar -->
+  <div class="wrap search-bar-wrap">
+    <div class="search-box">
+      <div class="search-group">
+        <label for="searchInput">ค้นหาคอนเสิร์ตหรือศิลปิน</label>
+        <input type="text" id="searchInput" placeholder="เช่น Midnight Echo, Sunset Festival, Jazz...">
+      </div>
+      <div class="search-group">
+        <label for="genreFilter">แนวเพลง</label>
+        <select id="genreFilter">
+          <option value="all">ทุกแนวเพลง</option>
+          <option value="Pop">Pop / Rock</option>
+          <option value="Indie">Indie</option>
+          <option value="Acoustic">Acoustic / Jazz</option>
+          <option value="EDM">EDM / Electronic</option>
+        </select>
+      </div>
+      <div class="search-group">
+        <label for="venueFilter">สถานที่จัดงาน</label>
+        <select id="venueFilter">
+          <option value="all">ทุกสถานที่</option>
+          <option value="อิมแพ็ค">อิมแพ็ค อารีนา</option>
+          <option value="ธันเดอร์โดม">ธันเดอร์โดม</option>
+          <option value="สวนลุมพินี">สวนลุมพินี</option>
+          <option value="ยูเนี่ยน">ยูเนี่ยน ฮอลล์</option>
+        </select>
+      </div>
+      <button class="btn btn-lg" id="searchBtn">🔍 ค้นหา</button>
+    </div>
+  </div>
+
+  <!-- Concerts Grid Section -->
+  <main class="section" id="concerts" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">คอนเสิร์ตที่เปิดจองตอนนี้</h2>
+          <p class="section-sub">รีบจองก่อนที่นั่งดีๆ จะหมด พร้อมรับสิทธิ์ Early Bird พิเศษ</p>
+        </div>
+        <a href="events.html" class="view-all-link">ดูคอนเสิร์ตทั้งหมด ➔</a>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="chips-wrap" id="chips">
+        <button class="chip active" data-genre="all">ทั้งหมด (All)</button>
+        <button class="chip" data-genre="Pop">ป็อป / ร็อก (Pop & Rock)</button>
+        <button class="chip" data-genre="Indie">อินดี้ (Indie)</button>
+        <button class="chip" data-genre="Festival">เทศกาลดนตรี (Festival)</button>
+        <button class="chip" data-genre="EDM">อิเล็กทรอนิกส์ (EDM)</button>
+        <button class="chip" data-genre="Acoustic">อคูสติก & แจ๊ส</button>
+      </div>
+
+      <!-- Dynamic Cards Grid -->
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+
+  <!-- Promotional Early Bird Banner -->
+  <section class="wrap">
+    <div class="promo-banner">
+      <div class="promo-content">
+        <h3>SPECIAL PROMOTION</h3>
+        <h2>รับส่วนลดทันที 10%<br>สำหรับการจองคอนเสิร์ตครั้งแรก</h2>
+        <p>สมัครสมาชิกและกรอกโค้ดส่วนลดในหน้าชำระเงิน ใช้ได้กับทุกคอนเสิร์ตที่เปิดจำหน่ายบัตรตลอดเดือนนี้</p>
+        <a class="btn" href="events.html">เลือกคอนเสิร์ตเลย</a>
+      </div>
+      <div class="promo-code-box">
+        <p class="promo-code-title">โค้ดส่วนลดพิเศษ</p>
+        <div class="promo-code">TICKET10</div>
+        <p class="promo-code-title">จำกัด 500 สิทธิ์แรกเท่านั้น</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose TicketNow Section -->
+  <section class="section" style="background: var(--paper-soft);">
+    <div class="wrap">
+      <div style="text-align: center; max-width: 650px; margin: 0 auto 40px;">
+        <h2 class="section-title">ทำไมต้องจองกับ TicketNow?</h2>
+        <p class="section-sub">มั่นใจได้ทุกขั้นตอน ด้วยมาตรฐานความปลอดภัยและการบริการที่ใส่ใจทุกแฟนเพลง</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-box">
+          <div class="feature-icon">⚡</div>
+          <h4>จองง่ายใน 3 นาที</h4>
+          <p>ระบบเลือกโซนและที่นั่งแบบ Real-time รวดเร็ว ไม่สะดุดแม้ในวันเปิดขายบัตรวันแรก</p>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">🛡️</div>
+          <h4>รับประกันบัตรแท้ 100%</h4>
+          <p>บัตรทุกใบออกโดยตรงจากผู้จัดงาน มีระบบป้องกันการปลอมแปลงและบาร์โค้ดเฉพาะตัว</p>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">📲</div>
+          <h4>E-Ticket สแกนผ่านมือถือ</h4>
+          <p>ไม่ต้องพกบัตรกระดาษหรือรอคิวรับหน้างาน เปิด QR Code ผ่านสมาร์ตโฟนแล้วเดินเข้างานได้ทันที</p>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">🎧</div>
+          <h4>บริการซัพพอร์ต 24 ชม.</h4>
+          <p>ทีมงานพร้อมดูแลและตอบคำถามตลอดเวลาผ่านแชตสดและโทรศัพท์ หมดกังวลทุกการจอง</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atmosphere Gallery Section -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">ภาพบรรยากาศคอนเสิร์ตสุดประทับใจ</h2>
+          <p class="section-sub">ร่วมเป็นส่วนหนึ่งของโมเมนต์สุดพิเศษกับศิลปินคนโปรดของคุณ</p>
+        </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=600&q=80" alt="Concert Lights" loading="lazy">
+          <div class="gallery-caption">แสง สี เสียง อลังการ</div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80" alt="Crowd Cheering" loading="lazy">
+          <div class="gallery-caption">พลังจากแฟนเพลง</div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80" alt="Live Stage" loading="lazy">
+          <div class="gallery-caption">เวทีระดับมาตรฐานสากล</div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=600&q=80" alt="Music Festival" loading="lazy">
+          <div class="gallery-caption">ความสนุกไม่รู้จบ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fan Reviews / Testimonials Section -->
+  <section class="section" style="background: var(--paper-soft);">
+    <div class="wrap">
+      <div style="text-align: center; max-width: 650px; margin: 0 auto 40px;">
+        <h2 class="section-title">เสียงตอบรับจากผู้ชมจริง</h2>
+        <p class="section-sub">ความประทับใจจากผู้ใช้งานที่จองบัตรผ่าน TicketNow</p>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"กดบัตรง่ายมาก ระบบลื่นไหลไม่เด้งเลย ได้โซน VIP สมใจ ชำระเงินผ่าน QR Code แป๊บเดียวก็ได้ E-ticket ในอีเมลแล้ว"</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">กม</div>
+            <div>
+              <div class="reviewer-name">คุณกมลวรรณ ท.</div>
+              <div class="reviewer-event">คอนเสิร์ต Midnight Echo Live</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"ชอบที่มีแผนผังและรูปสถานที่ให้ดูชัดเจนก่อนตัดสินใจซื้อบัตร ไม่ต้องเดาว่ามุมไหนมองเห็นเวทีชัด บริการดีเยี่ยม"</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">ธน</div>
+            <div>
+              <div class="reviewer-name">คุณธนภัทร ร.</div>
+              <div class="reviewer-event">Sunset Festival 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"ทีมงานซัพพอร์ตตอบคำถามเร็วมาก พิมพ์ถามเรื่องการนำบัตรเข้างานช่วงดึกยังได้คำตอบ แนะนำเพื่อนๆ ในกลุ่มมาใช้บริการหมดแล้วครับ"</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">ภค</div>
+            <div>
+              <div class="reviewer-name">คุณภควัต ส.</div>
+              <div class="reviewer-event">Acoustic Night</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer โหลดอัตโนมัติจาก app.js -->
+  <footer></footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+  <script>
+    // ฟังก์ชันสร้าง Card คอนเสิร์ต
+    function renderCards(list) {
+      const grid = document.getElementById('grid');
+      if (list.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--muted);">ไม่พบคอนเสิร์ตที่ค้นหา ลองเลือกตัวกรองใหม่อีกครั้ง</div>';
+        return;
+      }
+      grid.innerHTML = list.map(c => `
+        <article class="card">
+          <div class="card-img-wrap">
+            <img class="card-img" src="${c.img}" alt="${c.name}" loading="lazy">
+            <span class="card-badge">${c.tag}</span>
+            <span class="card-genre">${c.genre}</span>
+          </div>
+          <div class="body">
+            <span class="artist">${c.artist}</span>
+            <h3>${c.name}</h3>
+            <div class="meta">📅 ${c.date}</div>
+            <div class="meta">📍 ${c.venue}</div>
+            <p class="desc">${c.desc}</p>
+            <div class="foot">
+              <div class="price-box">
+                <span class="price-label">เริ่มต้น</span>
+                <span class="price">${fmt(c.price)}</span>
+              </div>
+              <a class="btn" href="detail.html?id=${c.id}">จองบัตรเลย</a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // แสดงการ์ดทั้งหมดตอนเริ่ม
+    renderCards(CONCERTS);
+
+    // ระบบกรองด้วย Chips
+    document.getElementById('chips').addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const genre = chip.dataset.genre;
+      if (genre === 'all') {
+        renderCards(CONCERTS);
+      } else {
+        const filtered = CONCERTS.filter(c => c.genre.toLowerCase().includes(genre.toLowerCase()) || c.name.toLowerCase().includes(genre.toLowerCase()));
+        renderCards(filtered);
+      }
+    });
+
+    // ระบบค้นหาจาก Search Bar
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const genre = document.getElementById('genreFilter').value;
+      const venue = document.getElementById('venueFilter').value;
+
+      const filtered = CONCERTS.filter(c => {
+        const matchQ = !q || c.name.toLowerCase().includes(q) || c.artist.toLowerCase().includes(q);
+        const matchGenre = genre === 'all' || c.genre.includes(genre);
+        const matchVenue = venue === 'all' || c.venue.includes(venue);
+        return matchQ && matchGenre && matchVenue;
+      });
+
+      renderCards(filtered);
+      document.getElementById('concerts').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+    document.getElementById('searchInput').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
+</body>
+</html>
