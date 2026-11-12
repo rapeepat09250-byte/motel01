@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TicketNow – จองบัตรคอนเสิร์ต</title><link rel="stylesheet" href="style.css"></head><body>
+<header></header>
+<section class="hero"><div class="wrap">
+ <div><h1>จองบัตรคอนเสิร์ต<br>ง่าย เร็ว ได้ที่นั่งที่ใช่</h1><p>เลือกคอนเสิร์ตที่ชอบ เลือกโซนและจำนวนบัตร แล้วชำระเงินได้ในไม่กี่ขั้นตอน</p><a class="btn" href="#concerts">ดูคอนเสิร์ตทั้งหมด</a></div>
+ <div class="stub" aria-hidden="true"><div class="main"><small>เร็วๆ นี้</small><h3>Midnight Echo Live</h3><small>12 ธ.ค. 2569 · อิมแพ็ค อารีนา</small><small>เริ่มต้น ฿1,500</small></div><div class="seat">ADMIT ONE</div></div>
+</div></section>
+<main><div class="wrap" id="concerts"><h2>คอนเสิร์ตที่เปิดจอง</h2><div class="grid" id="grid"></div></div></main>
+<footer></footer>
+<script src="app.js"></script>
+<script>
+document.getElementById('grid').innerHTML=CONCERTS.map(c=>`<article class="card"><div class="cover" style="background:${c.color}">${c.artist}</div><div class="body"><h3>${c.name}</h3><div class="meta">${c.date}</div><div class="meta">${c.venue}</div><div class="foot"><span class="price">เริ่ม ${fmt(1500)}</span><a class="btn" href="detail.html?id=${c.id}">ดูรายละเอียด</a></div></div></article>`).join('');
+</script></body></html>

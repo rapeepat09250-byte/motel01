@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>รายละเอียดคอนเสิร์ต – TicketNow</title><link rel="stylesheet" href="style.css"></head><body>
+<header></header>
+<main><div class="wrap"><a class="crumb" href="index.html">‹ กลับหน้าหลัก</a>
+<div class="layout"><div>
+ <div class="banner" id="banner"></div>
+ <div class="panel"><h2 id="title"></h2><p id="info" class="meta"></p><p style="margin-top:12px">ประตูเปิด 17:00 น. การแสดงเริ่ม 19:00 น. จำกัดไม่เกิน 4 ใบต่อโซน ไม่รับคืนบัตรหลังชำระเงิน</p></div>
+ <div class="panel"><h3>เลือกโซนที่นั่ง</h3><div id="zones"></div></div>
+</div>
+<aside class="panel"><h3>สรุปการจอง</h3><div id="sum"><p class="meta">ยังไม่ได้เลือกบัตร</p></div><div class="row total"><span>รวม</span><span id="total">฿0</span></div><button class="btn dark" id="next" style="width:100%;margin-top:16px" disabled>ไปชำระเงิน</button></aside>
+</div></div></main>
+<footer></footer>
+<script src="app.js"></script>
+<script>
+const c=getConcert(new URLSearchParams(location.search).get('id'));const qty={};
+banner.style.background=c.color;banner.textContent=c.artist;title.textContent=c.name;info.textContent=c.date+' · '+c.venue;
+zones.innerHTML=ZONES.map(z=>`<div class="zone"><div><b>${z.name}</b> – ${fmt(z.price)}<span>${z.desc}</span></div><div class="qty"><button aria-label="ลด ${z.name}" data-z="${z.id}" data-d="-1">−</button><b id="q-${z.id}">0</b><button aria-label="เพิ่ม ${z.name}" data-z="${z.id}" data-d="1">+</button></div></div>`).join('');
+zones.onclick=e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.z;qty[id]=Math.min(4,Math.max(0,(qty[id]||0)+ +b.dataset.d));render()};
+function render(){let t=0,h='';ZONES.forEach(z=>{const n=qty[z.id]||0;document.getElementById('q-'+z.id).textContent=n;if(n){t+=n*z.price;h+=`<div class="row"><span>${z.name} × ${n}</span><span>${fmt(n*z.price)}</span></div>`}});sum.innerHTML=h||'<p class="meta">ยังไม่ได้เลือกบัตร</p>';total.textContent=fmt(t);next.disabled=!t}
+next.onclick=()=>{const items=ZONES.filter(z=>qty[z.id]).map(z=>({name:z.name,price:z.price,qty:qty[z.id]}));saveOrder({concert:c.name,date:c.date,venue:c.venue,items});location.href='payment.html'};
+</script></body></html>
